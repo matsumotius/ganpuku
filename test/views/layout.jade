@@ -1,0 +1,30 @@
+!!! 5
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(type='text/javascript', src='/javascripts/jquery-1.6.4.min.js')
+    script(type='text/javascript', src='/javascripts/ganpuku.js')
+    script
+      $(function(){
+        $('body').append('<div id="player" />');
+        $('body').append('<button id="html5" class="change">html5</button>');
+        $('body').append('<button id="vimeo" class="change">vimeo</button>');
+        $('body').append('<button id="youtube" class="change">youtube</button>');
+        $('body').append('<button id="play" class="control">play</button>');
+        $('body').append('<button id="pause" class="control">pause</button>');
+        $('body').append('<button id="mute" class="control">mute</button>');
+        $('body').append('<button id="unmute" class="control">unmute</button>');
+        var url = {
+          html5   : 'http://videos.cache.magnify.net/87PYXZ2YP40L50MH-_s15e13_A_History_Channel_Thanksgiving_483_336_384x0.mp4',
+          vimeo   : 'http://vimeo.com/31431667',
+          youtube : 'http://www.youtube.com/watch?v=nrzy1YJA3JY'
+        };
+        var video = $('#player').ganpuku(url.vimeo);
+        video.on_load(function(){
+            video.on('ready', function(){ video.player.play(); });
+        });
+        $('.change').click(function(e){ video.change(url[$(this).attr('id')]); });
+        $('.control').click(function(e){ video.player[$(this).attr('id')](); });
+      });
+  body!= body
