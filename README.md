@@ -9,6 +9,10 @@ player.play();
 player.pause();
 player.mute();
 player.unmute();
+video.on('ready', function(){ video.player.play(); });
+video.on('play', function(){ console.log('start'); });
+video.on('pause', function(){ console.log('stop'); });
+video.on('end', function(){ console.log('finish'); });
 video.change('http://vimeo.com/example');
 video.change('http://example.com/example.mp4');
 ```
