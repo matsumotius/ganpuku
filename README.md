@@ -3,7 +3,7 @@ ganpuku(眼福) is a video player library. it supports html5/youtube/vimeo.
 
 ## usage
 ```javascript
-var video = $('#video').ganpuku('http://www.youtube.com/watch?v=example');
+var video = $('#video').ganpuku('http://www.youtube.com/watch?v=example'); // or http://vimeo.com/example or url
 var player = video.player;
 player.play();
 player.pause();
