@@ -81,25 +81,26 @@ var onYouTubePlayerAPIReady;
                                     attr('frameborder', 0);
         $('#'+this.id).append(this.iframe);
         this.vol = 0;
+        this.is_mute = false;
         this.__defineGetter__('volume', function(v){ return this.is_mute ? 0 : this.vol; });
         this.__defineSetter__('volume', function(v){
             this.order('setVolume', v); 
             this.vol = v; 
             return this.vol;
         });
-        this.is_mute = false;
-        this.callbacks = {};
+        var vimeo_events = { ready : 'ready', pause : 'pause', play : 'play', finish : 'end' };
         var that = this;
+        this.callbacks = { ready : function(v){ that.initialize(); } };
         window.addEventListener('message', function(v){ 
             var data = JSON.parse(v.data);
-            if('event' in data){
-                if(data.event in that.callbacks)  that.callbacks[data.event]();
+            if('event' in data && data.event in that.callbacks){
+                that.callbacks[data.event]();
+                if(data.event in vimeo_events) that.fire(vimeo_events[data.event], that);
             }
-            if('method' in data){
-                if(data.method in that.callbacks) that.callbacks[data.method](data.value);
+            if('method' in data && data.method in that.callbacks){
+                that.callbacks[data.method](data.value);
             }
         });
-        this.callbacks.ready = function(v){ that.initialize(); };
     };
     Vimeo.prototype = new Player();
     Vimeo.prototype.initialize = function(){
@@ -109,20 +110,29 @@ var onYouTubePlayerAPIReady;
     Vimeo.prototype.order = function(method, value){
         if(!method) return;
         if(is_function(value)) this.callbacks[method] = value;
-        var hash = { method : method, value : (is_function(value) || !value) ?  '' : value };
-        var json = JSON.stringify(hash);
+        var msg = { method : method, value : (is_function(value) || !value) ?  '' : value };
         var vimeo = $('#'+this.id).find('iframe')[0];
-        vimeo.contentWindow.postMessage(json, $(vimeo).attr('src').split('?')[0]);
+        vimeo.contentWindow.postMessage(JSON.stringify(msg), $(vimeo).attr('src').split('?')[0]);
     };
     Vimeo.prototype.play = function(){ this.order('play'); };
     Vimeo.prototype.pause = function(){ this.order('pause'); };
     Vimeo.prototype.seek_to = function(value){ this.order('seekTo', value); };
     Vimeo.prototype.mute = function(){
-        this.order('setVolume', 0);
+        if(this.is_mute) return;
+        var that = this;
+        this.order('getVolume', function(value){
+            that.vol = value;
+            that.order('setVolume', 0);
+        });
         this.is_mute = true;
     };
     Vimeo.prototype.unmute = function(){
-        this.order('setVolume', this.vol); 
+        if(false === this.is_mute) return;
+        var that = this;
+        this.order('getVolume', function(value){
+            if(value > 0) that.vol = value;
+            that.order('setVolume', that.vol);
+        });
         this.is_mute = false;
     };
     var YouTube = function(id, params){
