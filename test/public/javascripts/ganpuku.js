@@ -62,6 +62,11 @@ var onYouTubePlayerAPIReady;
         this.vol = this.player.volume;
         this.__defineGetter__('volume', function(){ return this.player.volume; });
         this.__defineSetter__('volume', function(v){ this.player.volume = v; });
+        var html5_events = { canplay : 'ready', play : 'play', pause : 'pause', ended : 'end', error : 'error' };
+        var that = this;
+        for(var key in html5_events){
+            $(this.player).bind(key, function(e){ that.fire(html5_events[e.type]); });
+        }
     };
     HTML5.prototype = new Player();
     HTML5.prototype.play = function(){ this.player.play(); };
