@@ -20,9 +20,12 @@ html
           vimeo   : 'http://vimeo.com/7702388',
           youtube : 'http://www.youtube.com/watch?v=nrzy1YJA3JY'
         };
-        var video = $('#player').ganpuku(url.vimeo);
+        var video = $('#player').ganpuku(url.youtube);
         video.on_load(function(){
-            video.on('ready', function(){ video.player.play(); });
+          video.on('ready', function(){
+            video.player.play();
+            console.log(video.player.duration);
+          });
         });
         $('.change').click(function(e){ video.change(url[$(this).attr('id')]); });
         $('.control').click(function(e){ video.player[$(this).attr('id')](); });
