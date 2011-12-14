@@ -223,6 +223,7 @@ var onYouTubePlayerAPIReady;
         api.load();
         // todo: apply type "url" or "id"
         if($(this).attr('id')) ganpuku = new Ganpuku(this, url, options)
+        if(api.is_loaded) ganpuku.initialize();
         return ganpuku;
     };
 })(jQuery);
